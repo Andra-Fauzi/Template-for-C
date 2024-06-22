@@ -1,20 +1,23 @@
+SRC_DIR = src
+OBJ_DIR = obj
+
 CC = gcc
-MF = src/
-UF = $(MF)utils/
-CFILES = $(shell find $(MF) -name '*.c')
-OJ = obj/
-OBJECTS = $(patsubst $(MF)%.c,$(OJ)%.o,$(CFILES))
-CFLAGS = -Wno-implicit-function-declaration
-OF = output/
-BINARY = $(OF)app
+CFLAGS = -Wall -g
 
-all: $(BINARY)
+SOURCES = $(shell find $(SRC_DIR) -name '*.c')
+OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
 
-$(BINARY) : $(OBJECTS)
-	$(CC) -o $@ $^
-$(OBJECTS): $(CFILES)
-	$(CC) $(CFLAGS) -c -o $@ $^
+EXEC = output/app
+
+all: $(EXEC)
+
+$(EXEC): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(OBJECTS)
-	echo "Removing everything but the source files"
+	rm -rf $(OBJ_DIR) $(EXEC)
+
